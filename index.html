@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #5568d3;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .error {
+            background: #fee;
+            color: #c00;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background: #efe;
+            color: #0a0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .pokemon-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .pokemon-card {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .pokemon-card:hover {
+            transform: scale(1.05);
+            border-color: #667eea;
+        }
+
+        .pokemon-card img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .pokemon-detail {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .pokemon-detail img {
+            display: block;
+            margin: 0 auto 20px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .credentials-box {
+            background: #fff9e6;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .credentials-box h3 {
+            color: #ff8c00;
+            margin-bottom: 10px;
+        }
+
+        .credential-item {
+            margin: 5px 0;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Pokemon API</h1>
+
+        <!-- Sección de Login -->
+        <div id="loginSection" class="section active">
+            <div class="credentials-box">
+                <h3>👤 Usuarios de Prueba:</h3>
+                <div class="credential-item"><strong>Con acceso:</strong> ash / pikachu123</div>
+                <div class="credential-item"><strong>Con acceso:</strong> misty / starmie123</div>
+                <div class="credential-item"><strong>Con acceso:</strong> brock / onix123</div>
+                <div class="credential-item"><strong>Sin acceso:</strong> team_rocket / meowth123</div>
+                <div class="credential-item"><strong>Sin acceso:</strong> gary / rival123</div>
+            </div>
+
+            <div id="loginMessage"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Usuario:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label>Contraseña:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+        </div>
+
+        <!-- Sección de Pokemon -->
+        <div id="pokemonSection" class="section">
+            <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            
+            <div class="user-info">
+                <strong>Usuario:</strong> <span id="currentUser"></span><br>
+                <strong>Permisos:</strong> <span id="userPermissions"></span>
+            </div>
+
+            <div id="pokemonMessage"></div>
+
+            <div class="form-group">
+                <label>Buscar Pokemon por ID o Nombre:</label>
+                <input type="text" id="pokemonSearch" placeholder="Ej: 1 o pikachu">
+                <button onclick="searchPokemon()" style="margin-top: 10px;">Buscar</button>
+            </div>
+
+            <div id="pokemonDetail"></div>
+
+            <h2 style="margin-top: 30px;">Lista de Pokemon</h2>
+            <button onclick="loadPokemonList()">Cargar Lista</button>
+            <div id="pokemonList" class="pokemon-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        let token = null;
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    token = data.token;
+                    showMessage('loginMessage', `Bienvenido ${data.username}!`, 'success');
+                    
+                    setTimeout(() => {
+                        document.getElementById('currentUser').textContent = data.username;
+                        document.getElementById('userPermissions').textContent = 
+                            data.canViewPokemon ? 'Puede ver Pokemon ✅' : 'Sin acceso a Pokemon ❌';
+                        
+                        showSection('pokemonSection');
+                    }, 1000);
+                } else {
+                    showMessage('loginMessage', data.error || 'Error al iniciar sesión', 'error');
+                }
+            } catch (error) {
+                showMessage('loginMessage', 'Error de conexión', 'error');
+            }
+        });
+
+        // Buscar Pokemon
+        async function searchPokemon() {
+            const search = document.getElementById('pokemonSearch').value.toLowerCase();
+            if (!search) return;
+
+            try {
+                const response = await fetch(`${API_URL}/pokemon/${search}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayPokemonDetail(data);
+                } else {
+                    showMessage('pokemonMessage', data.error || 'Error al buscar Pokemon', 'error');
+                }
+            } catch (error) {
+                showMessage('pokemonMessage', 'Error de conexión', 'error');
+            }
+        }
+
+        // Cargar lista de Pokemon
+        async function loadPokemonList() {
+            try {
+                const response = await fetch(`${API_URL}/pokemon`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayPokemonList(data);
+                } else {
+                    showMessage('pokemonMessage', data.error || 'Error al cargar lista', 'error');
+                }
+            } catch (error) {
+                showMessage('pokemonMessage', 'Error de conexión', 'error');
+            }
+        }
+
+        // Mostrar detalle de Pokemon
+        function displayPokemonDetail(pokemon) {
+            const detail = document.getElementById('pokemonDetail');
+            detail.innerHTML = `
+                <div class="pokemon-detail">
+                    <h2>${pokemon.name.toUpperCase()}</h2>
+                    <img src="${pokemon.sprite}" alt="${pokemon.name}">
+                    <p><strong>ID:</strong> ${pokemon.id}</p>
+                    <p><strong>Tipos:</strong> ${pokemon.types.join(', ')}</p>
+                    <p><strong>Altura:</strong> ${pokemon.height / 10}m</p>
+                    <p><strong>Peso:</strong> ${pokemon.weight / 10}kg</p>
+                </div>
+            `;
+        }
+
+        // Mostrar lista de Pokemon
+        function displayPokemonList(pokemonList) {
+            const list = document.getElementById('pokemonList');
+            list.innerHTML = pokemonList.map(pokemon => `
+                <div class="pokemon-card" onclick="searchPokemonByName('${pokemon.name}')">
+                    <h3>${pokemon.name}</h3>
+                    <p>Click para ver detalles</p>
+                </div>
+            `).join('');
+        }
+
+        async function searchPokemonByName(name) {
+            document.getElementById('pokemonSearch').value = name;
+            await searchPokemon();
+        }
+
+        // Logout
+        function logout() {
+            token = null;
+            document.getElementById('loginForm').reset();
+            document.getElementById('pokemonSearch').value = '';
+            document.getElementById('pokemonDetail').innerHTML = '';
+            document.getElementById('pokemonList').innerHTML = '';
+            showSection('loginSection');
+        }
+
+        // Utilidades
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function showMessage(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="${type}">${message}</div>`;
+            setTimeout(() => element.innerHTML = '', 5000);
+        }
+    </script>
+</body>
+</html>
