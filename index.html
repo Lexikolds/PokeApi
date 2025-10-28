@@ -3,14 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pokemon API</title>
+    <title>Pokemon API con Cookies</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -27,24 +23,13 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
 
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
+        h1 { color: #333; text-align: center; margin-bottom: 30px; }
+        
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        .form-group { margin-bottom: 20px; }
+        
         label {
             display: block;
             margin-bottom: 5px;
@@ -52,7 +37,7 @@
             font-weight: bold;
         }
 
-        input, select {
+        input {
             width: 100%;
             padding: 10px;
             border: 2px solid #ddd;
@@ -72,18 +57,14 @@
             transition: background 0.3s;
         }
 
-        button:hover {
-            background: #5568d3;
-        }
-
+        button:hover { background: #5568d3; }
+        
         .logout-btn {
             background: #e74c3c;
             margin-bottom: 20px;
         }
-
-        .logout-btn:hover {
-            background: #c0392b;
-        }
+        
+        .logout-btn:hover { background: #c0392b; }
 
         .error {
             background: #fee;
@@ -108,6 +89,51 @@
             margin-bottom: 20px;
         }
 
+        /* CAJA PARA VER COOKIES */
+        .cookie-box {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .cookie-box h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .cookie-info {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+
+        .cookie-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .status-active { background: #4caf50; color: white; }
+        .status-inactive { background: #f44336; color: white; }
+
+        .credentials-box {
+            background: #fff9e6;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .credentials-box h3 { color: #ff8c00; margin-bottom: 10px; }
+        .credential-item { margin: 5px 0; font-family: monospace; }
+
         .pokemon-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -130,11 +156,6 @@
             border-color: #667eea;
         }
 
-        .pokemon-card img {
-            width: 100px;
-            height: 100px;
-        }
-
         .pokemon-detail {
             background: #f9f9f9;
             border-radius: 10px;
@@ -148,39 +169,30 @@
             width: 150px;
             height: 150px;
         }
-
-        .credentials-box {
-            background: #fff9e6;
-            border: 2px solid #ffd700;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .credentials-box h3 {
-            color: #ff8c00;
-            margin-bottom: 10px;
-        }
-
-        .credential-item {
-            margin: 5px 0;
-            font-family: monospace;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🎮 Pokemon API</h1>
+        <h1>Pokemon API con Cookies</h1>
 
-        <!-- Sección de Login -->
+        <!-- PANTALLA DE LOGIN -->
         <div id="loginSection" class="section active">
             <div class="credentials-box">
-                <h3>👤 Usuarios de Prueba:</h3>
-                <div class="credential-item"><strong>Con acceso:</strong> ash / pikachu123</div>
-                <div class="credential-item"><strong>Con acceso:</strong> misty / starmie123</div>
-                <div class="credential-item"><strong>Con acceso:</strong> brock / onix123</div>
-                <div class="credential-item"><strong>Sin acceso:</strong> team_rocket / meowth123</div>
-                <div class="credential-item"><strong>Sin acceso:</strong> gary / rival123</div>
+                <h3>Usuarios de Prueba:</h3>
+                <div class="credential-item">ash / pikachu123 (CON acceso)</div>
+                <div class="credential-item">misty / starmie123 (CON acceso)</div>
+                <div class="credential-item">brock / onix123 (CON acceso)</div>
+                <div class="credential-item">team_rocket / meowth123 (SIN acceso)</div>
+                <div class="credential-item">gary / rival123 (SIN acceso)</div>
+            </div>
+
+            <!-- VISOR DE COOKIES EN LOGIN -->
+            <div class="cookie-box">
+                <h3>Estado de la Cookie</h3>
+                <span id="loginCookieStatus" class="cookie-status status-inactive">Sin Cookie</span>
+                <div class="cookie-info" id="loginCookieInfo">No hay sesión activa</div>
+                <p style="margin-top: 10px; color: #666; font-size: 13px;">
+                   
             </div>
 
             <div id="loginMessage"></div>
@@ -198,7 +210,7 @@
             </form>
         </div>
 
-        <!-- Sección de Pokemon -->
+        <!-- PANTALLA DE POKEMON -->
         <div id="pokemonSection" class="section">
             <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
             
@@ -207,11 +219,18 @@
                 <strong>Permisos:</strong> <span id="userPermissions"></span>
             </div>
 
+            <!-- VISOR DE COOKIES EN POKEMON -->
+            <div class="cookie-box">
+                <h3>Cookie de Sesión</h3>
+                <span id="pokemonCookieStatus" class="cookie-status status-active">Cookie Activa</span>
+                <div class="cookie-info" id="pokemonCookieInfo">Cargando...</div>
+            </div>
+
             <div id="pokemonMessage"></div>
 
             <div class="form-group">
                 <label>Buscar Pokemon por ID o Nombre:</label>
-                <input type="text" id="pokemonSearch" placeholder="Ej: 1 o pikachu">
+                <input type="text" id="pokemonSearch" placeholder="Ej: pikachu o 25">
                 <button onclick="searchPokemon()" style="margin-top: 10px;">Buscar</button>
             </div>
 
@@ -225,85 +244,134 @@
 
     <script>
         const API_URL = 'http://localhost:3000/api';
-        let token = null;
 
-        // Login
+        // Verificar si hay cookie activa
+        async function verificarCookie() {
+            try {
+                const res = await fetch(`${API_URL}/verify`, { credentials: 'include' });
+                if (res.ok) {
+                    const data = await res.json();
+                    return { activa: true, usuario: data.user };
+                }
+                return { activa: false };
+            } catch {
+                return { activa: false };
+            }
+        }
+
+        // Actualizar visor de cookies
+        async function actualizarVisorCookies() {
+            const cookie = await verificarCookie();
+            const enLogin = document.getElementById('loginSection').classList.contains('active');
+
+            if (enLogin) {
+                const status = document.getElementById('loginCookieStatus');
+                const info = document.getElementById('loginCookieInfo');
+                
+                if (cookie.activa) {
+                    status.textContent = 'Cookie Activa';
+                    status.className = 'cookie-status status-active';
+                    info.innerHTML = `<strong>Usuario:</strong> ${cookie.usuario.username}<br><strong>Permisos:</strong> ${cookie.usuario.canViewPokemon ? 'Ver Pokémon' : 'Sin acceso'}`;
+                } else {
+                    status.textContent = 'Sin Cookie';
+                    status.className = 'cookie-status status-inactive';
+                    info.textContent = 'No hay sesión activa';
+                }
+            } else {
+                const status = document.getElementById('pokemonCookieStatus');
+                const info = document.getElementById('pokemonCookieInfo');
+                
+                if (cookie.activa) {
+                    status.textContent = 'Cookie Activa';
+                    status.className = 'cookie-status status-active';
+                    info.innerHTML = `<strong>Usuario:</strong> ${cookie.usuario.username}<br><strong>Permisos:</strong> ${cookie.usuario.canViewPokemon ? 'Ver Pokémon' : 'Sin acceso'}`;
+                } else {
+                    status.textContent = 'Cookie Eliminada';
+                    status.className = 'cookie-status status-inactive';
+                    info.textContent = 'La sesión ha expirado';
+                }
+            }
+        }
+
+        // LOGIN
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch(`${API_URL}/login`, {
+                const res = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({ username, password })
                 });
 
-                const data = await response.json();
+                const data = await res.json();
 
-                if (response.ok) {
-                    token = data.token;
-                    showMessage('loginMessage', `Bienvenido ${data.username}!`, 'success');
+                if (res.ok) {
+                    mostrarMensaje('loginMessage', `Bienvenido ${data.username}! Cookie creada`, 'success');
+                    
+                    await actualizarVisorCookies();
                     
                     setTimeout(() => {
                         document.getElementById('currentUser').textContent = data.username;
                         document.getElementById('userPermissions').textContent = 
-                            data.canViewPokemon ? 'Puede ver Pokemon ✅' : 'Sin acceso a Pokemon ❌';
-                        
-                        showSection('pokemonSection');
-                    }, 1000);
+                            data.canViewPokemon ? 'Puede ver Pokemon' : 'Sin acceso';
+                        cambiarSeccion('pokemonSection');
+                        actualizarVisorCookies();
+                    }, 1500);
                 } else {
-                    showMessage('loginMessage', data.error || 'Error al iniciar sesión', 'error');
+                    mostrarMensaje('loginMessage', data.error || 'Error al iniciar sesión', 'error');
                 }
             } catch (error) {
-                showMessage('loginMessage', 'Error de conexión', 'error');
+                mostrarMensaje('loginMessage', 'Error de conexión con el servidor', 'error');
             }
         });
 
         // Buscar Pokemon
         async function searchPokemon() {
-            const search = document.getElementById('pokemonSearch').value.toLowerCase();
-            if (!search) return;
+            const busqueda = document.getElementById('pokemonSearch').value.toLowerCase();
+            if (!busqueda) return;
 
             try {
-                const response = await fetch(`${API_URL}/pokemon/${search}`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const res = await fetch(`${API_URL}/pokemon/${busqueda}`, {
+                    credentials: 'include'
                 });
 
-                const data = await response.json();
+                const data = await res.json();
 
-                if (response.ok) {
-                    displayPokemonDetail(data);
+                if (res.ok) {
+                    mostrarDetallePokemon(data);
                 } else {
-                    showMessage('pokemonMessage', data.error || 'Error al buscar Pokemon', 'error');
+                    mostrarMensaje('pokemonMessage', data.error, 'error');
                 }
             } catch (error) {
-                showMessage('pokemonMessage', 'Error de conexión', 'error');
+                mostrarMensaje('pokemonMessage', 'Error de conexión', 'error');
             }
         }
 
-        // Cargar lista de Pokemon
+        // Cargar lista
         async function loadPokemonList() {
             try {
-                const response = await fetch(`${API_URL}/pokemon`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const res = await fetch(`${API_URL}/pokemon`, {
+                    credentials: 'include'
                 });
 
-                const data = await response.json();
+                const data = await res.json();
 
-                if (response.ok) {
-                    displayPokemonList(data);
+                if (res.ok) {
+                    mostrarListaPokemon(data);
                 } else {
-                    showMessage('pokemonMessage', data.error || 'Error al cargar lista', 'error');
+                    mostrarMensaje('pokemonMessage', data.error, 'error');
                 }
             } catch (error) {
-                showMessage('pokemonMessage', 'Error de conexión', 'error');
+                mostrarMensaje('pokemonMessage', 'Error de conexión', 'error');
             }
         }
 
-        // Mostrar detalle de Pokemon
-        function displayPokemonDetail(pokemon) {
+        // Mostrar detalle
+        function mostrarDetallePokemon(pokemon) {
             const detail = document.getElementById('pokemonDetail');
             detail.innerHTML = `
                 <div class="pokemon-detail">
@@ -317,43 +385,59 @@
             `;
         }
 
-        // Mostrar lista de Pokemon
-        function displayPokemonList(pokemonList) {
-            const list = document.getElementById('pokemonList');
-            list.innerHTML = pokemonList.map(pokemon => `
-                <div class="pokemon-card" onclick="searchPokemonByName('${pokemon.name}')">
+        // Mostrar lista
+        function mostrarListaPokemon(lista) {
+            const listContainer = document.getElementById('pokemonList');
+            listContainer.innerHTML = lista.map(pokemon => `
+                <div class="pokemon-card" onclick="buscarPorNombre('${pokemon.name}')">
                     <h3>${pokemon.name}</h3>
                     <p>Click para ver detalles</p>
                 </div>
             `).join('');
         }
 
-        async function searchPokemonByName(name) {
-            document.getElementById('pokemonSearch').value = name;
-            await searchPokemon();
+        function buscarPorNombre(nombre) {
+            document.getElementById('pokemonSearch').value = nombre;
+            searchPokemon();
         }
 
-        // Logout
-        function logout() {
-            token = null;
-            document.getElementById('loginForm').reset();
-            document.getElementById('pokemonSearch').value = '';
-            document.getElementById('pokemonDetail').innerHTML = '';
-            document.getElementById('pokemonList').innerHTML = '';
-            showSection('loginSection');
+        // LOGOUT - Limpia cookie y vuelve al login
+        async function logout() {
+            try {
+                await fetch(`${API_URL}/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+
+                document.getElementById('loginForm').reset();
+                document.getElementById('pokemonSearch').value = '';
+                document.getElementById('pokemonDetail').innerHTML = '';
+                document.getElementById('pokemonList').innerHTML = '';
+                
+                mostrarMensaje('loginMessage', 'Cookie eliminada. Sesión cerrada', 'success');
+                cambiarSeccion('loginSection');
+                
+                setTimeout(actualizarVisorCookies, 300);
+            } catch (error) {
+                console.error('Error al cerrar sesión:', error);
+            }
         }
 
         // Utilidades
-        function showSection(sectionId) {
+        function cambiarSeccion(seccionId) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
+            document.getElementById(seccionId).classList.add('active');
         }
 
-        function showMessage(elementId, message, type) {
-            const element = document.getElementById(elementId);
-            element.innerHTML = `<div class="${type}">${message}</div>`;
-            setTimeout(() => element.innerHTML = '', 5000);
+        function mostrarMensaje(elementId, mensaje, tipo) {
+            const el = document.getElementById(elementId);
+            el.innerHTML = `<div class="${tipo}">${mensaje}</div>`;
+            setTimeout(() => el.innerHTML = '', 5000);
         }
+
+        // Actualizar cookies cada 3 segundos
+        setInterval(actualizarVisorCookies, 3000);
+        actualizarVisorCookies();
     </script>
 </body>
 </html>
